@@ -52,6 +52,7 @@ public:
 
     void resetHead() {head = 0;}
     void setHead(const size_t new_pos) {head = new_pos;}
+    [[nodiscard]] size_t getHead() const {return head;}
     void clear() {
         data.clear();
         head = 0;
