@@ -13,6 +13,7 @@ class TBuffer {
     std::vector<int8_t> data{};
     size_t head = 0;
     uint8_t isFile: 1 = 0;
+    uint8_t isLittleEndian: 1 = 1;
 public:
     static void composeBuffers(TBuffer& outBuffer, const std::initializer_list<const TBuffer*>& buffers) {
         for (const TBuffer* buffer : buffers) {
@@ -22,6 +23,13 @@ public:
 
     TBuffer() {
         data.reserve(1024);
+    }
+
+    void bigEndian() {
+        this->isLittleEndian = 0;
+    }
+    void littleEndian() {
+        this->isLittleEndian = 1;
     }
 
     explicit TBuffer(const size_t size) {
@@ -83,7 +91,6 @@ public:
     void pushInt32(uint32_t number);
     void pushInt64(uint64_t number);
     void pushFloat(float number);
-
     void pushDouble(double number);
 
     void pushSize(const size_t number) {pushInt64(number);}
@@ -158,6 +165,8 @@ public:
     uint32_t readInt32();
     uint64_t readInt64();
     size_t readSize() {return readInt64();}
+    float readFloat();
+    double readDouble();
     template <typename T>
     std::vector<T> readArray(const std::function<T(TBuffer*)>& func) {
         const size_t size = readSize();

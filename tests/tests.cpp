@@ -609,6 +609,35 @@ TEST(BufferTests, BufferSaveLoadInt) {
     buffer.resetHead();
     EXPECT_EQ(i, buffer.readInt32());
 }
+TEST(BufferTests, BufferSaveLoadIntBigEnd) {
+    constexpr int i = 123;
+    TBuffer buffer;
+    buffer.bigEndian();
+    buffer.pushInt32(i);
+    buffer.resetHead();
+    EXPECT_EQ(i, buffer.readInt32());
+}
+TEST(BufferTests, BufferSaveLoadFloat) {
+    constexpr float i = 3.14;
+    constexpr float d = 233.14;
+    TBuffer buffer;
+    buffer.pushFloat(i);
+    buffer.pushDouble(d);
+    buffer.resetHead();
+    EXPECT_NEAR(i, buffer.readFloat(), .0001);
+    EXPECT_NEAR(d, buffer.readDouble(), .0001);
+}
+TEST(BufferTests, BufferSaveLoadFloatBigEnd) {
+    constexpr float i = 3.14;
+    constexpr float d = 233.14;
+    TBuffer buffer;
+    buffer.bigEndian();
+    buffer.pushFloat(i);
+    buffer.pushDouble(d);
+    buffer.resetHead();
+    EXPECT_NEAR(i, buffer.readFloat(), .0001);
+    EXPECT_NEAR(d, buffer.readDouble(), .0001);
+}
 TEST(BufferTests, BufferSaveLoadString) {
     const std::string s = "Hello world?";
     TBuffer buffer;
