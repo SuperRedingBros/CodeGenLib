@@ -112,14 +112,42 @@ public:
             value_func(val, this);
         }
     }
-    void pushString(const std::string_view string) {
-        pushSize(string.size());
+    void pushString(const std::string_view string, const uint8_t sizeBytes = 8) {
+        switch (sizeBytes) {
+            case 8:
+                pushSize(string.size());
+                break;
+            case 4:
+                pushInt32(string.size());
+                break;
+            case 2:
+                pushInt16(string.size());
+                break;
+            case 1:
+                pushInt8(string.size());
+                break;
+            default: throw std::invalid_argument("pushString() called with bad size");
+        }
         for (const char c: string) {
             pushByte(c);
         }
     }
-    void pushString(const std::string& string) {
-        pushSize(string.size());
+    void pushString(const std::string& string, const uint8_t sizeBytes = 8) {
+        switch (sizeBytes) {
+            case 8:
+                pushSize(string.size());
+                break;
+            case 4:
+                pushInt32(string.size());
+                break;
+            case 2:
+                pushInt16(string.size());
+                break;
+            case 1:
+                pushInt8(string.size());
+                break;
+            default: throw std::invalid_argument("pushString() called with bad size");
+        }
         for (const char c: string) {
             pushByte(c);
         }
@@ -188,8 +216,23 @@ public:
         }
         return map;
     }
-    std::string readString() {
-        const size_t size = readSize();
+    std::string readString(const uint8_t sizeBytes = 8) {
+        size_t size;
+        switch (sizeBytes) {
+            case 8:
+                size = readSize();
+                break;
+            case 4:
+                size = readInt32();
+                break;
+            case 2:
+                size = readInt16();
+                break;
+            case 1:
+                size = readByte();
+                break;
+            default: throw std::invalid_argument("readString() called with bad size");
+        }
         std::string string;
         for (size_t i = 0; i < size; i++) {
             string.push_back(readChar());
